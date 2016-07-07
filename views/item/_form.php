@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use mdm\admin\components\RouteRule;
+use mdm\admin\AutocompleteAsset;
+use yii\helpers\Json;
 
 /* @var $this yii\web\View */
 /* @var $model mdm\admin\models\AuthItem */
@@ -11,13 +13,21 @@ use mdm\admin\components\RouteRule;
 
 $context = $this->context;
 $labels = $context->labels();
-$rules = array_keys(Yii::$app->getAuthManager()->getRules());
-$rules = array_combine($rules, $rules);
+$rules = Yii::$app->getAuthManager()->getRules();
 unset($rules[RouteRule::RULE_NAME]);
+$source = Json::htmlEncode(array_keys($rules));
+
+$js = <<<JS
+    $('#rule_name').autocomplete({
+        source: $source,
+    });
+JS;
+AutocompleteAsset::register($this);
+$this->registerJs($js);
 ?>
 
 <div class="auth-item-form">
-    <?php $form = ActiveForm::begin(['id'=>'item-form']); ?>
+    <?php $form = ActiveForm::begin(['id' => 'item-form']); ?>
     <div class="row">
         <div class="col-sm-6">
             <?= $form->field($model, 'name')->textInput(['maxlength' => 64]) ?>
@@ -25,7 +35,7 @@ unset($rules[RouteRule::RULE_NAME]);
             <?= $form->field($model, 'description')->textarea(['rows' => 2]) ?>
         </div>
         <div class="col-sm-6">
-            <?= $form->field($model, 'ruleName')->dropDownList($rules, ['prompt' => '--' . Yii::t('rbac-admin', 'Select Rule')]) ?>
+            <?= $form->field($model, 'ruleName')->textInput(['id' => 'rule_name']) ?>
 
             <?= $form->field($model, 'data')->textarea(['rows' => 6]) ?>
         </div>
