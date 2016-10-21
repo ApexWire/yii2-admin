@@ -25,9 +25,12 @@ class Assignment extends Object
     public $user;
 
     /**
-     * @inheritdoc
+     * Assignment constructor.
+     * @param integer $id
+     * @param null $user
+     * @param array $config
      */
-    public function __construct($id, $user = null, $config = array())
+    public function __construct($id, $user = null, $config = [])
     {
         $this->id = $id;
         $this->user = $user;
@@ -47,7 +50,7 @@ class Assignment extends Object
             try {
                 /** @type null|\yii\rbac\Role|\yii\rbac\Permission $item */
                 $item = $manager->getRole($name);
-                $item = $item ? : $manager->getPermission($name);
+                $item = $item ?: $manager->getPermission($name);
                 $manager->assign($item, $this->id);
                 $success++;
             } catch (\Exception $exc) {
@@ -55,6 +58,7 @@ class Assignment extends Object
             }
         }
         Helper::invalidate();
+
         return $success;
     }
 
@@ -71,7 +75,7 @@ class Assignment extends Object
             try {
                 /** @type null|\yii\rbac\Role|\yii\rbac\Permission $item */
                 $item = $manager->getRole($name);
-                $item = $item ? : $manager->getPermission($name);
+                $item = $item ?: $manager->getPermission($name);
                 $manager->revoke($item, $this->id);
                 $success++;
             } catch (\Exception $exc) {
@@ -79,6 +83,7 @@ class Assignment extends Object
             }
         }
         Helper::invalidate();
+
         return $success;
     }
 
@@ -112,7 +117,7 @@ class Assignment extends Object
             unset($avaliable[$item->roleName]);
         }
 
-        return[
+        return [
             'avaliable' => $avaliable,
             'assigned' => $assigned
         ];

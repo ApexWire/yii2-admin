@@ -17,7 +17,7 @@ use yii\filters\VerbFilter;
  */
 class AssignmentController extends Controller
 {
-    /** @type \yii\web\IdentityInterface */
+    /** @type \yii\web\IdentityInterface|\yii\db\ActiveRecord */
     public $userClassName;
     public $idField = 'id';
     public $usernameField = 'username';
@@ -128,7 +128,7 @@ class AssignmentController extends Controller
     /**
      * Finds the Assignment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param  integer $id
+     * @param integer $id
      * @return Assignment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
