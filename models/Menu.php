@@ -2,6 +2,7 @@
 
 namespace mdm\admin\models;
 
+use yii\db\ActiveRecord;
 use Yii;
 use mdm\admin\components\Configs;
 use yii\db\Query;
@@ -22,7 +23,7 @@ use yii\db\Query;
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
-class Menu extends \yii\db\ActiveRecord
+class Menu extends ActiveRecord
 {
     public $parent_name;
 
@@ -141,7 +142,7 @@ class Menu extends \yii\db\ActiveRecord
     public static function getMenuSource()
     {
         $tableName = static::tableName();
-        return (new \yii\db\Query())
+        return (new Query())
                 ->select(['m.id', 'm.name', 'm.route', 'parent_name' => 'p.name'])
                 ->from(['m' => $tableName])
                 ->leftJoin(['p' => $tableName], '[[m.parent]]=[[p.id]]')

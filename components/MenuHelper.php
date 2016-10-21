@@ -9,7 +9,7 @@ use mdm\admin\models\Menu;
 /**
  * MenuHelper used to generate menu depend of user role.
  * Usage
- * 
+ *
  * ```
  * use mdm\admin\components\MenuHelper;
  * use yii\bootstrap\Nav;
@@ -18,9 +18,9 @@ use mdm\admin\models\Menu;
  *    'items' => MenuHelper::getAssignedMenu(Yii::$app->user->id)
  * ]);
  * ```
- * 
+ *
  * To reformat returned, provide callback to method.
- * 
+ *
  * ```
  * $callback = function ($menu) {
  *    $data = eval($menu['data']);
@@ -47,7 +47,7 @@ class MenuHelper
      * @param integer $root
      * @param \Closure $callback use to reformat output.
      * callback should have format like
-     * 
+     *
      * ```
      * function ($menu) {
      *    return [
@@ -59,7 +59,7 @@ class MenuHelper
      *    ]
      * }
      * ```
-     * @param boolean  $refresh
+     * @param boolean $refresh
      * @return array
      */
     public static function getAssignedMenu($userId, $root = null, $callback = null, $refresh = false)
@@ -70,6 +70,7 @@ class MenuHelper
         $manager = Yii::$app->getAuthManager();
         $menus = Menu::find()->asArray()->indexBy('id')->all();
         $key = [__METHOD__, $userId, $manager->defaultRoles];
+        /** @type \yii\caching\Cache $cache */
         $cache = $config->cache;
 
         if ($refresh || $cache === null || ($assigned = $cache->get($key)) === false) {
@@ -184,10 +185,10 @@ class MenuHelper
 
     /**
      * Normalize menu
-     * @param  array $assigned
-     * @param  array $menus
-     * @param  Closure $callback
-     * @param  integer $parent
+     * @param array $assigned
+     * @param array $menus
+     * @param \Closure $callback
+     * @param integer $parent
      * @return array
      */
     private static function normalizeMenu(&$assigned, &$menus, $callback, $parent = null)

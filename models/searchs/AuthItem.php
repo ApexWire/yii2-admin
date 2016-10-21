@@ -56,7 +56,7 @@ class AuthItem extends Model
      */
     public function search($params)
     {
-        /* @var \yii\rbac\Manager $authManager */
+        /* @var \yii\rbac\ManagerInterface $authManager */
         $authManager = Yii::$app->getAuthManager();
         if ($this->type == Item::TYPE_ROLE) {
             $items = $authManager->getRoles();

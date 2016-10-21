@@ -2,6 +2,7 @@
 
 namespace mdm\admin\models;
 
+use yii\base\UnknownPropertyException;
 use Yii;
 use yii\base\Object;
 use mdm\admin\components\Helper;
@@ -44,6 +45,7 @@ class Assignment extends Object
         $success = 0;
         foreach ($items as $name) {
             try {
+                /** @type null|\yii\rbac\Role|\yii\rbac\Permission $item */
                 $item = $manager->getRole($name);
                 $item = $item ? : $manager->getPermission($name);
                 $manager->assign($item, $this->id);
@@ -67,6 +69,7 @@ class Assignment extends Object
         $success = 0;
         foreach ($items as $name) {
             try {
+                /** @type null|\yii\rbac\Role|\yii\rbac\Permission $item */
                 $item = $manager->getRole($name);
                 $item = $item ? : $manager->getPermission($name);
                 $manager->revoke($item, $this->id);
@@ -123,5 +126,7 @@ class Assignment extends Object
         if ($this->user) {
             return $this->user->$name;
         }
+
+        throw new UnknownPropertyException('Getting unknown property: ' . $name);
     }
 }

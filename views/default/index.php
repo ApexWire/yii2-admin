@@ -5,6 +5,7 @@ use yii\helpers\Markdown;
 use yii\helpers\Url;
 
 /* @var $this View */
+/* @var $page string  */
 
 if (($pos = strrpos($page, '/')) === false) {
     $baseDir = '';
@@ -16,7 +17,11 @@ if (($pos = strrpos($page, '/')) === false) {
 
 if ($page == 'README.md') {
     $this->params['breadcrumbs'][] = 'Readme';
-    $menus = $this->context->module->getMenus();
+    /** @type yii\web\Controller $context */
+    $context = $this->context;
+    /** @type mdm\admin\Module $module */
+    $module = $context->module;
+    $menus = $module->getMenus();
     $links = [];
     foreach ($menus as $menu) {
         $url = Url::to($menu['url'], true);

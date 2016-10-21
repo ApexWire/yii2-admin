@@ -18,7 +18,6 @@ use mdm\admin\components\Helper;
  */
 class RuleController extends Controller
 {
-
     /**
      * @inheritdoc
      */
@@ -44,8 +43,8 @@ class RuleController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
         return $this->render('index', [
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
@@ -114,17 +113,18 @@ class RuleController extends Controller
     /**
      * Finds the AuthItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param  string        $id
-     * @return AuthItem      the loaded model
-     * @throws HttpException if the model cannot be found
+     * @param string $id
+     * @return BizRule The loaded model
+     * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
         $item = Yii::$app->authManager->getRule($id);
-        if ($item) {
-            return new BizRule($item);
-        } else {
+
+        if (is_null($item)) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        return new BizRule($item);
     }
 }

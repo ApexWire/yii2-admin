@@ -31,6 +31,7 @@ class RouteRule extends Rule
                 return false;
             }
         }
+
         return true;
     }
 }

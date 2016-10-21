@@ -11,6 +11,7 @@ use yii\helpers\Json;
 /* @var $form yii\widgets\ActiveForm */
 /* @var $context mdm\admin\components\ItemController */
 
+/** @type mdm\admin\controllers\RoleController|mdm\admin\controllers\PermissionController $context */
 $context = $this->context;
 $labels = $context->labels();
 $rules = Yii::$app->getAuthManager()->getRules();
@@ -19,7 +20,7 @@ $source = Json::htmlEncode(array_keys($rules));
 
 $js = <<<JS
     $('#rule_name').autocomplete({
-        source: $source,
+        source: $source
     });
 JS;
 AutocompleteAsset::register($this);

@@ -17,10 +17,9 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'className')->textInput() ?>
 
     <div class="form-group">
-        <?php
-        echo Html::submitButton($model->isNewRecord ? Yii::t('rbac-admin', 'Create') : Yii::t('rbac-admin', 'Update'), [
-            'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary'])
-        ?>
+        <?= Html::submitButton(Yii::t('rbac-admin', $model->isNewRecord ? 'Create' : 'Update'), [
+            'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary'
+        ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

@@ -40,6 +40,7 @@ class Helper
     protected static function getDefaultRoutes()
     {
         if (self::$_defaultRoutes === null) {
+            /** @type \yii\rbac\DbManager $manager */
             $manager = Yii::$app->getAuthManager();
             $roles = $manager->defaultRoles;
             $cache = Configs::cache();
@@ -98,6 +99,7 @@ class Helper
     /**
      * Check access route for user.
      * @param string|array $route
+     * @param array $params
      * @param integer|User $user
      * @return boolean
      */
@@ -158,6 +160,7 @@ class Helper
      * Filter menu items
      * @param array $items
      * @param integer|User $user
+     * @return array
      */
     public static function filter($items, $user = null)
     {

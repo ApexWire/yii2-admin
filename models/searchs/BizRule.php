@@ -45,7 +45,7 @@ class BizRule extends Model
      */
     public function search($params)
     {
-        /* @var \yii\rbac\Manager $authManager */
+        /* @var \yii\rbac\ManagerInterface $authManager */
         $authManager = Yii::$app->authManager;
         $models = [];
         $included = !($this->load($params) && $this->validate() && trim($this->name) !== '');

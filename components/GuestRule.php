@@ -9,6 +9,8 @@ use yii\rbac\Rule;
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 2.5
+ *
+ * @deprecated ???
  */
 class GuestRule extends Rule
 {
