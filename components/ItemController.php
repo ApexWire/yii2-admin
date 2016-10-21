@@ -16,7 +16,7 @@ use yii\rbac\Item;
  *
  * @property integer $type
  * @property array $labels
- * 
+ *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
@@ -167,7 +167,7 @@ class ItemController extends Controller
      */
     public function getType()
     {
-        
+
     }
 
     /**
@@ -181,10 +181,10 @@ class ItemController extends Controller
     {
         $auth = Yii::$app->getAuthManager();
         $item = $this->type === Item::TYPE_ROLE ? $auth->getRole($id) : $auth->getPermission($id);
-        if ($item) {
-            return new AuthItem($item);
-        } else {
+        if (is_null($item)) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        return new AuthItem($item);
     }
 }

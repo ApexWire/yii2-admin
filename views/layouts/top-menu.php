@@ -2,8 +2,11 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+/** @type yii\web\Controller $controller */
 $controller = $this->context;
-$menus = $controller->module->menus;
+/** @type mdm\admin\Module $module */
+$module = $controller->module;
+$menus = $module->menus;
 $route = $controller->route;
 foreach ($menus as $i => $menu) {
     $menus[$i]['active'] = strpos($route, trim($menu['url'][0], '/')) === 0;
@@ -11,7 +14,7 @@ foreach ($menus as $i => $menu) {
 $this->params['nav-items'] = $menus;
 $this->params['top-menu'] = true;
 ?>
-<?php $this->beginContent($controller->module->mainLayout) ?>
+<?php $this->beginContent($module->mainLayout) ?>
 <div class="row">
     <div class="col-sm-12">
         <?= $content ?>

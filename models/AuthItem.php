@@ -2,6 +2,7 @@
 
 namespace mdm\admin\models;
 
+use yii\rbac\Rule;
 use Yii;
 use yii\rbac\Item;
 use yii\helpers\Json;
@@ -18,6 +19,7 @@ use mdm\admin\components\Helper;
  * @property string $data
  *
  * @property Item $item
+ * @property boolean $isNewRecord
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
@@ -36,7 +38,7 @@ class AuthItem extends Model
 
     /**
      * Initialize object
-     * @param Item  $item
+     * @param Item $item
      * @param array $config
      */
     public function __construct($item = null, $config = [])
@@ -60,9 +62,13 @@ class AuthItem extends Model
         return [
             [['ruleName'], 'checkRule'],
             [['name', 'type'], 'required'],
-            [['name'], 'unique', 'when' => function() {
-                return $this->isNewRecord || ($this->_item->name != $this->name);
-            }],
+            [
+                ['name'],
+                'unique',
+                'when' => function () {
+                    return $this->isNewRecord || ($this->_item->name != $this->name);
+                }
+            ],
             [['type'], 'integer'],
             [['description', 'data', 'ruleName'], 'default'],
             [['name'], 'string', 'max' => 64]
@@ -95,7 +101,7 @@ class AuthItem extends Model
         if (!Yii::$app->getAuthManager()->getRule($name)) {
             try {
                 $rule = Yii::createObject($name);
-                if ($rule instanceof \yii\rbac\Rule) {
+                if ($rule instanceof Rule) {
                     $rule->name = $name;
                     Yii::$app->getAuthManager()->add($rule);
                 } else {
@@ -153,6 +159,7 @@ class AuthItem extends Model
     {
         if ($this->validate()) {
             $manager = Yii::$app->authManager;
+            $oldName = '';
             if ($this->_item === null) {
                 if ($this->type == Item::TYPE_ROLE) {
                     $this->_item = $manager->createRole($this->name);
@@ -174,10 +181,11 @@ class AuthItem extends Model
                 $manager->update($oldName, $this->_item);
             }
             Helper::invalidate();
+
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -206,6 +214,7 @@ class AuthItem extends Model
         if ($success > 0) {
             Helper::invalidate();
         }
+
         return $success;
     }
 
@@ -235,6 +244,7 @@ class AuthItem extends Model
         if ($success > 0) {
             Helper::invalidate();
         }
+
         return $success;
     }
 
@@ -274,7 +284,8 @@ class AuthItem extends Model
             unset($avaliable[$item->name]);
         }
         unset($avaliable[$this->name]);
-        return[
+
+        return [
             'avaliable' => $avaliable,
             'assigned' => $assigned
         ];

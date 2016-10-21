@@ -15,6 +15,9 @@ use yii\filters\VerbFilter;
  */
 class RouteController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -29,6 +32,7 @@ class RouteController extends Controller
             ],
         ];
     }
+
     /**
      * Lists all Route models.
      * @return mixed
@@ -36,6 +40,7 @@ class RouteController extends Controller
     public function actionIndex()
     {
         $model = new Route();
+
         return $this->render('index', ['routes' => $model->getRoutes()]);
     }
 
@@ -51,6 +56,7 @@ class RouteController extends Controller
         $routes = preg_split('/\s*,\s*/', trim($routes), -1, PREG_SPLIT_NO_EMPTY);
         $model = new Route();
         $model->addNew($routes);
+
         return $model->getRoutes();
     }
 
@@ -64,6 +70,7 @@ class RouteController extends Controller
         $model = new Route();
         $model->addNew($routes);
         Yii::$app->getResponse()->format = 'json';
+
         return $model->getRoutes();
     }
 
@@ -77,18 +84,20 @@ class RouteController extends Controller
         $model = new Route();
         $model->remove($routes);
         Yii::$app->getResponse()->format = 'json';
+
         return $model->getRoutes();
     }
 
     /**
      * Refresh cache
-     * @return type
+     * @return array
      */
     public function actionRefresh()
     {
         $model = new Route();
         $model->invalidate();
         Yii::$app->getResponse()->format = 'json';
+
         return $model->getRoutes();
     }
 }

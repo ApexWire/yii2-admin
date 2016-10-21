@@ -2,6 +2,7 @@
 
 namespace mdm\admin;
 
+use yii\web\Application;
 use Yii;
 use yii\helpers\Inflector;
 use yii\helpers\ArrayHelper;
@@ -100,7 +101,7 @@ class Module extends \yii\base\Module
             $this->defaultRoute = 'assignment';
         }
         //user did not define the Navbar?
-        if ($this->navbar === null && Yii::$app instanceof \yii\web\Application) {
+        if ($this->navbar === null && Yii::$app instanceof Application) {
             $this->navbar = [
                 ['label' => Yii::t('rbac-admin', 'Help'), 'url' => ['default/index']],
                 ['label' => Yii::t('rbac-admin', 'Application'), 'url' => Yii::$app->homeUrl]

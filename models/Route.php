@@ -2,6 +2,7 @@
 
 namespace mdm\admin\models;
 
+use yii\base\Object;
 use Yii;
 use mdm\admin\components\Helper;
 use yii\caching\TagDependency;
@@ -16,7 +17,7 @@ use Exception;
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
-class Route extends \yii\base\Object
+class Route extends Object
 {
     const CACHE_TAG = 'mdm.admin.route';
 
@@ -100,7 +101,8 @@ class Route extends \yii\base\Object
 
     /**
      * Get list of application routes
-     * @return array
+     * @param null $module
+     * @return array|mixed
      */
     public function getAppRoutes($module = null)
     {
@@ -110,6 +112,7 @@ class Route extends \yii\base\Object
             $module = Yii::$app->getModule($module);
         }
         $key = [__METHOD__, $module->getUniqueId()];
+        /** @type \yii\caching\Cache $cache */
         $cache = Configs::instance()->cache;
         if ($cache === null || ($result = $cache->get($key)) === false) {
             $result = [];
@@ -202,7 +205,7 @@ class Route extends \yii\base\Object
      */
     protected function getControllerActions($type, $id, $module, &$result)
     {
-        $token = "Create controller with cofig=" . VarDumper::dumpAsString($type) . " and id='$id'";
+        $token = "Create controller with config=" . VarDumper::dumpAsString($type) . " and id='$id'";
         Yii::beginProfile($token, __METHOD__);
         try {
             /* @var $controller \yii\base\Controller */

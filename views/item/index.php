@@ -9,6 +9,7 @@ use mdm\admin\components\RouteRule;
 /* @var $searchModel mdm\admin\models\searchs\AuthItem */
 /* @var $context mdm\admin\components\ItemController */
 
+/** @type mdm\admin\controllers\RoleController|mdm\admin\controllers\PermissionController $context */
 $context = $this->context;
 $labels = $context->labels();
 $this->title = Yii::t('rbac-admin', $labels['Items']);

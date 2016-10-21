@@ -13,13 +13,12 @@ use yii\rbac\Item;
  */
 class PermissionController extends ItemController
 {
-
     /**
      * @inheritdoc
      */
     public function labels()
     {
-        return[
+        return [
             'Item' => 'Permission',
             'Items' => 'Permissions',
         ];

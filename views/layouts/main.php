@@ -9,6 +9,11 @@ use yii\helpers\Html;
 
 list(,$url) = Yii::$app->assetManager->publish('@mdm/admin/assets');
 $this->registerCssFile($url.'/main.css');
+
+/** @type yii\web\Controller $controller */
+$controller = $this->context;
+/** @type mdm\admin\Module $module */
+$module = $controller->module;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -37,7 +42,7 @@ $this->registerCssFile($url.'/main.css');
 
         echo Nav::widget([
             'options' => ['class' => 'nav navbar-nav navbar-right'],
-            'items' => $this->context->module->navbar,
+            'items' => $module->navbar,
          ]);
         NavBar::end();
         ?>

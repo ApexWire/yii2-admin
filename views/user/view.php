@@ -11,15 +11,17 @@ $this->title = $model->username;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('rbac-admin', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$controllerId = $this->context->uniqueId . '/';
+/** @type yii\web\Controller $controller */
+$controller = $this->context;
+
+$controllerId = $controller->uniqueId . '/';
 ?>
 <div class="user-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?php
-        if ($model->status == 0 && Helper::checkRoute($controllerId . 'activate')) {
+        <?php if ($model->status == 0 && Helper::checkRoute($controllerId . 'activate')) {
             echo Html::a(Yii::t('rbac-admin', 'Activate'), ['activate', 'id' => $model->id], [
                 'class' => 'btn btn-primary',
                 'data' => [
@@ -27,10 +29,8 @@ $controllerId = $this->context->uniqueId . '/';
                     'method' => 'post',
                 ],
             ]);
-        }
-        ?>
-        <?php
-        if (Helper::checkRoute($controllerId . 'delete')) {
+        } ?>
+        <?php if (Helper::checkRoute($controllerId . 'delete')) {
             echo Html::a(Yii::t('rbac-admin', 'Delete'), ['delete', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
                 'data' => [
@@ -38,12 +38,10 @@ $controllerId = $this->context->uniqueId . '/';
                     'method' => 'post',
                 ],
             ]);
-        }
-        ?>
+        } ?>
     </p>
 
-    <?=
-    DetailView::widget([
+    <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'username',
@@ -51,7 +49,5 @@ $controllerId = $this->context->uniqueId . '/';
             'created_at:date',
             'status',
         ],
-    ])
-    ?>
-
+    ]); ?>
 </div>

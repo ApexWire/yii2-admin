@@ -2,6 +2,7 @@
 
 namespace mdm\admin\models\searchs;
 
+use yii\db\ActiveQuery;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -45,7 +46,7 @@ class Menu extends MenuModel
     {
         $query = MenuModel::find()
             ->from(MenuModel::tableName() . ' t')
-            ->joinWith(['menuParent' => function ($q) {
+            ->joinWith(['menuParent' => function (ActiveQuery $q) {
             $q->from(MenuModel::tableName() . ' parent');
         }]);
 

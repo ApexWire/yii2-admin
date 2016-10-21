@@ -17,7 +17,7 @@ use yii\filters\VerbFilter;
  */
 class AssignmentController extends Controller
 {
-    /** @type \yii\web\IdentityInterface  */
+    /** @type \yii\web\IdentityInterface */
     public $userClassName;
     public $idField = 'id';
     public $usernameField = 'username';
@@ -33,7 +33,7 @@ class AssignmentController extends Controller
         parent::init();
         if ($this->userClassName === null) {
             $this->userClassName = Yii::$app->getUser()->identityClass;
-            $this->userClassName = $this->userClassName ? : 'mdm\admin\models\User';
+            $this->userClassName = $this->userClassName ?: 'mdm\admin\models\User';
         }
     }
 
@@ -61,7 +61,8 @@ class AssignmentController extends Controller
     {
         if ($this->searchClass === null) {
             $searchModel = new AssignmentSearch;
-            $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams(), $this->userClassName, $this->usernameField);
+            $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams(), $this->userClassName,
+                $this->usernameField);
         } else {
             $class = $this->searchClass;
             $searchModel = new $class;
@@ -69,11 +70,11 @@ class AssignmentController extends Controller
         }
 
         return $this->render('index', [
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
-                'idField' => $this->idField,
-                'usernameField' => $this->usernameField,
-                'extraColumns' => $this->extraColumns,
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'idField' => $this->idField,
+            'usernameField' => $this->usernameField,
+            'extraColumns' => $this->extraColumns,
         ]);
     }
 
@@ -87,10 +88,10 @@ class AssignmentController extends Controller
         $model = $this->findModel($id);
 
         return $this->render('view', [
-                'model' => $model,
-                'idField' => $this->idField,
-                'usernameField' => $this->usernameField,
-                'fullnameField' => $this->fullnameField,
+            'model' => $model,
+            'idField' => $this->idField,
+            'usernameField' => $this->usernameField,
+            'fullnameField' => $this->fullnameField,
         ]);
     }
 
@@ -105,6 +106,7 @@ class AssignmentController extends Controller
         $model = new Assignment($id);
         $success = $model->assign($items);
         Yii::$app->getResponse()->format = 'json';
+
         return array_merge($model->getItems(), ['success' => $success]);
     }
 
@@ -119,6 +121,7 @@ class AssignmentController extends Controller
         $model = new Assignment($id);
         $success = $model->revoke($items);
         Yii::$app->getResponse()->format = 'json';
+
         return array_merge($model->getItems(), ['success' => $success]);
     }
 

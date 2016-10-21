@@ -11,10 +11,10 @@ use yii\di\Instance;
 /**
  * Configs
  * Used for configure some value. To set config you can use [[\yii\base\Application::$params]]
- * 
+ *
  * ```
  * return [
- *     
+ *
  *     'mdm.admin.configs' => [
  *         'db' => 'customDb',
  *         'menuTable' => '{{%admin_menu}}',
@@ -25,9 +25,9 @@ use yii\di\Instance;
  *     ]
  * ];
  * ```
- * 
+ *
  * or use [[\Yii::$container]]
- * 
+ *
  * ```
  * Yii::$container->set('mdm\admin\components\Configs',[
  *     'db' => 'customDb',
@@ -75,7 +75,7 @@ class Configs extends \yii\base\Object
      */
     public $strict = true;
     /**
-     * @var array 
+     * @var array
      */
     public $options;
     /**
@@ -120,6 +120,11 @@ class Configs extends \yii\base\Object
         return self::$_instance;
     }
 
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed|null
+     */
     public static function __callStatic($name, $arguments)
     {
         $instance = static::instance();

@@ -14,7 +14,6 @@ use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\base\UserException;
 use yii\mail\BaseMailer;
@@ -32,21 +31,6 @@ class UserController extends Controller
     public function behaviors()
     {
         return [
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'rules' => [
-//                    [
-//                        'actions' => ['signup', 'reset-password', 'login', 'request-password-reset'],
-//                        'allow' => true,
-//                        'roles' => ['?'],
-//                    ],
-//                    [
-//                        'actions' => ['logout', 'change-password', 'index', 'view', 'delete', 'activate'],
-//                        'allow' => true,
-//                        'roles' => ['@'],
-//                    ],
-//                ],
-//            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -80,7 +64,9 @@ class UserController extends Controller
     public function afterAction($action, $result)
     {
         if ($this->_oldMailPath !== null) {
-            Yii::$app->getMailer()->setViewPath($this->_oldMailPath);
+            /** @type \yii\mail\BaseMailer $mailer */
+            $mailer = Yii::$app->getMailer();
+            $mailer->setViewPath($this->_oldMailPath);
         }
         return parent::afterAction($action, $result);
     }
@@ -198,7 +184,9 @@ class UserController extends Controller
 
     /**
      * Reset password
-     * @return string
+     * @param $token
+     * @return string|\yii\web\Response
+     * @throws BadRequestHttpException
      */
     public function actionResetPassword($token)
     {
@@ -238,7 +226,7 @@ class UserController extends Controller
     /**
      * Activate new user
      * @param integer $id
-     * @return type
+     * @return \yii\web\Response
      * @throws UserException
      * @throws NotFoundHttpException
      */

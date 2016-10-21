@@ -6,6 +6,7 @@ use yii\helpers\Html;
 /* @var $model mdm\admin\models\AuthItem */
 /* @var $context mdm\admin\components\ItemController */
 
+/** @type mdm\admin\controllers\RoleController|mdm\admin\controllers\PermissionController $context */
 $context = $this->context;
 $labels = $context->labels();
 $this->title = Yii::t('rbac-admin', 'Create ' . $labels['Item']);

@@ -10,6 +10,7 @@ use yii\web\YiiAsset;
 /* @var $model mdm\admin\models\AuthItem */
 /* @var $context mdm\admin\components\ItemController */
 
+/** @type mdm\admin\controllers\RoleController|mdm\admin\controllers\PermissionController $context */
 $context = $this->context;
 $labels = $context->labels();
 $this->title = $model->name;
