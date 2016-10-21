@@ -79,12 +79,13 @@ class Route extends Object
 
     /**
      * Get avaliable and assigned routes
+     * @param null|string|\yii\web\Application $module
      * @return array
      */
-    public function getRoutes()
+    public function getRoutes($module = null)
     {
         $manager = Yii::$app->getAuthManager();
-        $routes = $this->getAppRoutes();
+        $routes = $this->getAppRoutes($module);
         $exists = [];
         foreach (array_keys($manager->getPermissions()) as $name) {
             if ($name[0] !== '/') {
@@ -101,7 +102,7 @@ class Route extends Object
 
     /**
      * Get list of application routes
-     * @param null $module
+     * @param null|string||\yii\web\Application $module
      * @return array|mixed
      */
     public function getAppRoutes($module = null)
