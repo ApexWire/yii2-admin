@@ -9,6 +9,7 @@ use mdm\admin\models\searchs\BizRule as BizRuleSearch;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use mdm\admin\components\Helper;
+use mdm\admin\components\Configs;
 
 /**
  * Description of RuleController
@@ -104,7 +105,7 @@ class RuleController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        Yii::$app->authManager->remove($model->item);
+        Configs::authManager()->remove($model->item);
         Helper::invalidate();
 
         return $this->redirect(['index']);
@@ -119,12 +120,11 @@ class RuleController extends Controller
      */
     protected function findModel($id)
     {
-        $item = Yii::$app->authManager->getRule($id);
-
-        if (is_null($item)) {
-            throw new NotFoundHttpException('The requested page does not exist.');
+        $item = Configs::authManager()->getRule($id);
+        if ($item) {
+            return new BizRule($item);
         }
 
-        return new BizRule($item);
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

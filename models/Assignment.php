@@ -3,9 +3,9 @@
 namespace mdm\admin\models;
 
 use yii\base\UnknownPropertyException;
-use Yii;
-use yii\base\Object;
+use mdm\admin\components\Configs;
 use mdm\admin\components\Helper;
+use Yii;
 
 /**
  * Description of Assignment
@@ -13,7 +13,7 @@ use mdm\admin\components\Helper;
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 2.5
  */
-class Assignment extends Object
+class Assignment extends \mdm\admin\BaseObject
 {
     /**
      * @var integer User id
@@ -44,7 +44,7 @@ class Assignment extends Object
      */
     public function assign($items)
     {
-        $manager = Yii::$app->getAuthManager();
+        $manager = Configs::authManager();
         $success = 0;
         foreach ($items as $name) {
             try {
@@ -69,7 +69,7 @@ class Assignment extends Object
      */
     public function revoke($items)
     {
-        $manager = Yii::$app->getAuthManager();
+        $manager = Configs::authManager();
         $success = 0;
         foreach ($items as $name) {
             try {
@@ -88,15 +88,15 @@ class Assignment extends Object
     }
 
     /**
-     * Get all avaliable and assigned roles/permission
+     * Get all available and assigned roles/permission
      * @return array
      */
     public function getItems()
     {
-        $manager = Yii::$app->getAuthManager();
-        $avaliable = [];
+        $manager = Configs::authManager();
+        $available = [];
         foreach ($manager->getRoles() as $item) {
-            $avaliable[$item->name] = [
+            $available[$item->name] = [
                 'type' => 'role',
                 'desc' => $item->description,
             ];
@@ -104,7 +104,7 @@ class Assignment extends Object
 
         foreach ($manager->getPermissions() as $item) {
             if ($item->name[0] != '/') {
-                $avaliable[$item->name] = [
+                $available[$item->name] = [
                     'type' => 'permission',
                     'desc' => $item->description,
                 ];
@@ -113,12 +113,12 @@ class Assignment extends Object
 
         $assigned = [];
         foreach ($manager->getAssignments($this->id) as $item) {
-            $assigned[$item->roleName] = $avaliable[$item->roleName];
-            unset($avaliable[$item->roleName]);
+            $assigned[$item->roleName] = $available[$item->roleName];
+            unset($available[$item->roleName]);
         }
 
         return [
-            'avaliable' => $avaliable,
+            'available' => $available,
             'assigned' => $assigned
         ];
     }

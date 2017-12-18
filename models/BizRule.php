@@ -3,8 +3,9 @@
 namespace mdm\admin\models;
 
 use yii\base\Model;
-use yii\rbac\Rule;
 use Yii;
+use yii\rbac\Rule;
+use mdm\admin\components\Configs;
 
 /**
  * BizRule
@@ -115,7 +116,7 @@ class BizRule extends Model
      */
     public static function find($id)
     {
-        $item = Yii::$app->getAuthManager()->getRule($id);
+        $item = Configs::authManager()->getRule($id);
         if ($item !== null) {
             return new static($item);
         }
@@ -130,7 +131,7 @@ class BizRule extends Model
     public function save()
     {
         if ($this->validate()) {
-            $manager = Yii::$app->getAuthManager();
+            $manager = Configs::authManager();
             $class = $this->className;
             $oldName = '';
             if ($this->_item === null) {

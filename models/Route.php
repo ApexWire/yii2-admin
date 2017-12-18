@@ -2,14 +2,13 @@
 
 namespace mdm\admin\models;
 
-use yii\base\Object;
-use Yii;
-use mdm\admin\components\Helper;
-use yii\caching\TagDependency;
-use mdm\admin\components\RouteRule;
-use mdm\admin\components\Configs;
-use yii\helpers\VarDumper;
 use Exception;
+use mdm\admin\components\Configs;
+use mdm\admin\components\Helper;
+use mdm\admin\components\RouteRule;
+use Yii;
+use yii\caching\TagDependency;
+use yii\helpers\VarDumper;
 
 /**
  * Description of Route
@@ -17,9 +16,17 @@ use Exception;
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
-class Route extends Object
+class Route extends \mdm\admin\BaseObject
 {
     const CACHE_TAG = 'mdm.admin.route';
+
+    const PREFIX_ADVANCED = '@';
+    const PREFIX_BASIC = '/';
+
+    /**
+     * @var
+     */
+    private $_routePrefix;
 
     /**
      * Assign or remove items
@@ -28,11 +35,11 @@ class Route extends Object
      */
     public function addNew($routes)
     {
-        $manager = Yii::$app->getAuthManager();
+        $manager = Configs::authManager();
         foreach ($routes as $route) {
             try {
                 $r = explode('&', $route);
-                $item = $manager->createPermission('/' . trim($route, '/'));
+                $item = $manager->createPermission($this->getPermissionName($route));
                 if (count($r) > 1) {
                     $action = '/' . trim($r[0], '/');
                     if (($itemAction = $manager->getPermission($action)) === null) {
@@ -65,10 +72,10 @@ class Route extends Object
      */
     public function remove($routes)
     {
-        $manager = Yii::$app->getAuthManager();
+        $manager = Configs::authManager();
         foreach ($routes as $route) {
             try {
-                $item = $manager->createPermission('/' . trim($route, '/'));
+                $item = $manager->createPermission($this->getPermissionName($route));
                 $manager->remove($item);
             } catch (Exception $exc) {
                 Yii::error($exc->getMessage(), __METHOD__);
@@ -78,25 +85,92 @@ class Route extends Object
     }
 
     /**
-     * Get avaliable and assigned routes
-     * @param null|string|\yii\web\Application $module
+     * Returns route prefix depending on the configuration.
+     * @return string Route prefix
+     */
+    public function getRoutePrefix()
+    {
+        if (!$this->_routePrefix) {
+            $this->_routePrefix = Configs::instance()->advanced ? self::PREFIX_ADVANCED : self::PREFIX_BASIC;
+        }
+        return $this->_routePrefix;
+    }
+
+    /**
+     * Returns the correct permission name depending on the configuration.
+     * @param  string $route Route
+     * @return string        Permission name
+     */
+    public function getPermissionName($route)
+    {
+        if (self::PREFIX_BASIC == $this->routePrefix) {
+            return self::PREFIX_BASIC . trim($route, self::PREFIX_BASIC);
+        } else {
+            return self::PREFIX_ADVANCED . ltrim(trim($route, self::PREFIX_BASIC), self::PREFIX_ADVANCED);
+        }
+    }
+
+    /**
+     * Get available and assigned routes
      * @return array
      */
-    public function getRoutes($module = null)
+    public function getRoutes()
     {
-        $manager = Yii::$app->getAuthManager();
-        $routes = $this->getAppRoutes($module);
+        $manager = Configs::authManager();
+        // Get advanced configuration
+        $advanced = Configs::instance()->advanced;
+        if ($advanced) {
+            // Use advanced route scheme.
+            // Set advanced route prefix.
+            $this->_routePrefix = self::PREFIX_ADVANCED;
+            // Create empty routes array.
+            $routes = [];
+            // Save original app.
+            $yiiApp = Yii::$app;
+            // Step through each configured application
+            foreach ($advanced as $id => $configPaths) {
+                // Force correct id string.
+                $id = $this->routePrefix . ltrim(trim($id), $this->routePrefix);
+                // Create empty config array.
+                $config = [];
+                // Assemble configuration for current app.
+                foreach ($configPaths as $configPath) {
+                    // Merge every new configuration with the old config array.
+                    $config = yii\helpers\ArrayHelper::merge($config, require (Yii::getAlias($configPath)));
+                }
+                // Create new app using the config array.
+                unset($config['bootstrap']);
+                $app = new yii\web\Application($config);
+                // Get all the routes of the newly created app.
+                $r = $this->getAppRoutes($app);
+                // Dump new app
+                unset($app);
+                // Prepend the app id to all routes.
+                foreach ($r as $route) {
+                    $routes[$id . $route] = $id . $route;
+                }
+            }
+            // Switch back to original app.
+            Yii::$app = $yiiApp;
+            unset($yiiApp);
+        } else {
+            // Use basic route scheme.
+            // Set basic route prefix
+            $this->_routePrefix = self::PREFIX_BASIC;
+            // Get basic app routes.
+            $routes = $this->getAppRoutes();
+        }
         $exists = [];
         foreach (array_keys($manager->getPermissions()) as $name) {
-            if ($name[0] !== '/') {
+            if ($name[0] !== $this->routePrefix) {
                 continue;
             }
             $exists[] = $name;
             unset($routes[$name]);
         }
-        return[
-            'avaliable' => array_keys($routes),
-            'assigned' => $exists
+        return [
+            'available' => array_keys($routes),
+            'assigned' => $exists,
         ];
     }
 
@@ -112,12 +186,12 @@ class Route extends Object
         } elseif (is_string($module)) {
             $module = Yii::$app->getModule($module);
         }
-        $key = [__METHOD__, $module->getUniqueId()];
+        $key = [__METHOD__, Yii::$app->id, $module->getUniqueId()];
         /** @type \yii\caching\Cache $cache */
         $cache = Configs::instance()->cache;
         if ($cache === null || ($result = $cache->get($key)) === false) {
             $result = [];
-            $this->getRouteRecrusive($module, $result);
+            $this->getRouteRecursive($module, $result);
             if ($cache !== null) {
                 $cache->set($key, $result, Configs::instance()->cacheDuration, new TagDependency([
                     'tags' => self::CACHE_TAG,
@@ -129,18 +203,18 @@ class Route extends Object
     }
 
     /**
-     * Get route(s) recrusive
+     * Get route(s) recursive
      * @param \yii\base\Module $module
      * @param array $result
      */
-    protected function getRouteRecrusive($module, &$result)
+    protected function getRouteRecursive($module, &$result)
     {
         $token = "Get Route of '" . get_class($module) . "' with id '" . $module->uniqueId . "'";
         Yii::beginProfile($token, __METHOD__);
         try {
             foreach ($module->getModules() as $id => $child) {
                 if (($child = $module->getModule($id)) !== null) {
-                    $this->getRouteRecrusive($child, $result);
+                    $this->getRouteRecursive($child, $result);
                 }
             }
 
@@ -264,8 +338,8 @@ class Route extends Object
      */
     protected function setDefaultRule()
     {
-        if (Yii::$app->getAuthManager()->getRule(RouteRule::RULE_NAME) === null) {
-            Yii::$app->getAuthManager()->add(new RouteRule());
+        if (Configs::authManager()->getRule(RouteRule::RULE_NAME) === null) {
+            Configs::authManager()->add(new RouteRule());
         }
     }
 }
