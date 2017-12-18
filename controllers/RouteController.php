@@ -12,31 +12,9 @@ use yii\filters\VerbFilter;
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
- *
- *
- * in config
- * $config = yii\helpers\ArrayHelper::merge(
- *  require(Yii::getAlias('@common') . '/config/main.php'),
- *  require(Yii::getAlias('@common') . '/config/main-local.php'),
- *  require(Yii::getAlias('@frontend') . '/config/main.php'),
- *  require(Yii::getAlias('@frontend') . '/config/main-local.php')
- * );
- * ...
- * 'controllerMap' => [
- * ...
- *  'route' => [
- *  'class' => 'mdm\admin\controllers\RouteController',
- *  'appModule' =>  new yii\web\Application($config),
- *  ],
- * ...
- * ],
- * ```
  */
 class RouteController extends Controller
 {
-    /** @type null|string|\yii\web\Application */
-    public $appModule = null;
-
     /**
      * @inheritdoc
      */
@@ -63,7 +41,7 @@ class RouteController extends Controller
     {
         $model = new Route();
 
-        return $this->render('index', ['routes' => $model->getRoutes($this->appModule)]);
+        return $this->render('index', ['routes' => $model->getRoutes()]);
     }
 
     /**
@@ -79,7 +57,7 @@ class RouteController extends Controller
         $model = new Route();
         $model->addNew($routes);
 
-        return $model->getRoutes($this->appModule);
+        return $model->getRoutes();
     }
 
     /**
@@ -93,7 +71,7 @@ class RouteController extends Controller
         $model->addNew($routes);
         Yii::$app->getResponse()->format = 'json';
 
-        return $model->getRoutes($this->appModule);
+        return $model->getRoutes();
     }
 
     /**
@@ -107,7 +85,7 @@ class RouteController extends Controller
         $model->remove($routes);
         Yii::$app->getResponse()->format = 'json';
 
-        return $model->getRoutes($this->appModule);
+        return $model->getRoutes();
     }
 
     /**
@@ -120,6 +98,6 @@ class RouteController extends Controller
         $model->invalidate();
         Yii::$app->getResponse()->format = 'json';
 
-        return $model->getRoutes($this->appModule);
+        return $model->getRoutes();
     }
 }
